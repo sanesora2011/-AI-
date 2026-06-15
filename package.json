@@ -1,0 +1,26 @@
+{
+  "name": "article-mailer",
+  "version": "1.0.0",
+  "description": "AI 每日简报自动邮件系统 — 采集 ArXiv/Hacker News AI 动态，DeepSeek 摘要，邮件推送",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test-run": "tsx src/index.ts --once"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "fast-xml-parser": "^4.4.0",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemailer": "^6.4.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}

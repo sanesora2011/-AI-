@@ -1,0 +1,45 @@
+name: AI 每日简报
+
+on:
+  # 每天北京时间 9:00 = UTC 1:00
+  schedule:
+    - cron: '0 1 * * *'
+  # 允许手动触发（在 GitHub 页面点「Run workflow」即可测试）
+  workflow_dispatch:
+
+jobs:
+  collect-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 恢复去重状态——这样每天不会重复发同一篇
+      - uses: actions/cache@v4
+        id: state-cache
+        with:
+          path: data
+          key: ai-digest-state-${{ github.run_id }}
+          restore-keys: ai-digest-state-
+
+      - run: npm ci
+
+      - run: npm run test-run
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          LLM_MODEL: deepseek-chat
+          STATE_FILE: ./data/state.json
+
+      # 保存已发送记录，给下次用
+      - if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data
+          key: ai-digest-state-${{ github.run_id }}
